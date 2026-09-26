@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg text-ink font-body antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display text-ink;
+    letter-spacing: -0.02em;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme("colors.teal.DEFAULT");
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-2.5 text-[0.95rem] font-medium transition-colors duration-150;
+  }
+  .btn-primary {
+    @apply btn bg-navy text-white hover:bg-navy-soft;
+  }
+  .btn-teal {
+    @apply btn bg-teal text-white hover:bg-teal-strong;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-ink border border-border hover:border-navy/30 hover:bg-navy/[0.02];
+  }
+  .card {
+    @apply bg-surface border border-border rounded-lg shadow-card;
+  }
+  .label-sm {
+    @apply text-[0.8rem] text-muted;
+  }
+}
