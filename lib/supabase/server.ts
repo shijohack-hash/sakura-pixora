@@ -1,23 +1,27 @@
+
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
-/**
- * Supabase client for use on the server: Server Components, Route Handlers,
- * and Server Actions. Wires Supabase's auth cookies through Next's cookies()
- * so sessions survive refreshes and are readable in Server Components.
- *
- * NOTE: cookies() is only mutable inside Route Handlers and Server Actions.
- * When called from a Server Component (e.g. a layout), setAll() calls are
- * silently ignored by Next — that's expected and handled by middleware.ts,
- * which refreshes the session cookie on every request.
- */
 export function createClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
+
+  // Log only whether the variables exist, never their values.
+  console.log("[Pixora Supabase diagnostic]", {
+    urlExists: Boolean(url),
+    keyExists: Boolean(key),
+    environment: process.env.NODE_ENV,
+  });
 
   if (!url || !key) {
     throw new Error(
-      "Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local."
+      `Supabase environment configuration missing: ${
+        !url && !key
+          ? "URL and anon key"
+          : !url
+            ? "URL"
+            : "anon key"
+      }. Check Vercel Environment Variables and redeploy.`
     );
   }
 
@@ -30,11 +34,12 @@ export function createClient() {
       },
       setAll(cookiesToSet) {
         try {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          );
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options);
+          });
         } catch {
-          // Called from a Server Component — middleware.ts handles refresh instead.
+          // Server Components cannot modify cookies.
+          // Middleware handles session refresh.
         }
       },
     },
