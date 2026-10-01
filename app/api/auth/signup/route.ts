@@ -78,6 +78,8 @@ export async function POST(request: Request) {
     });
 
     if (error) {
+      console.error("[Pixora signup] Supabase error:", error.message);
+
       return NextResponse.json(
         { error: error.message },
         { status: 400 }
@@ -85,6 +87,8 @@ export async function POST(request: Request) {
     }
 
     if (!data.user) {
+      console.error("[Pixora signup] Supabase returned no user.");
+
       return NextResponse.json(
         { error: "Account creation could not be confirmed. Please try again." },
         { status: 500 }
@@ -111,7 +115,7 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error(
-      "Pixora signup error:",
+      "[Pixora signup] Error:",
       error instanceof Error ? error.message : "Unknown error"
     );
 
